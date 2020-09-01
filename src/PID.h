@@ -31,7 +31,13 @@ class PID {
    */
   double TotalError();
 
- private:
+  /**
+   * Calculate the control signal.
+   * @output The control signal as a saturated additive inverse of Total PID error
+   */
+  double GetControl();
+
+//  protected:
   /**
    * PID Errors
    */
@@ -41,7 +47,7 @@ class PID {
 
   /**
    * PID Coefficients
-   */ 
+   */
   double Kp;
   double Ki;
   double Kd;
