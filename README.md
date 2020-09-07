@@ -15,6 +15,8 @@ The performance of the implemented algorithm can be observed in the video below.
 
 [![Car running laps autonomously](https://img.youtube.com/vi/73V1IrIFXyY/0.jpg)](https://www.youtube.com/watch?v=73V1IrIFXyY)
 
+The PID gains for the steering angle controller were chosen to be _K<sub>P</sub>_ = 0.25, _K<sub>I</sub>_ = 0.005 and _K<sub>D</sub>_ = 5.5, while those for the throttle control were _K<sub>P</sub>_ = 0.6, _K<sub>I</sub>_ = 0 and _K<sub>D</sub>_ = 0.1, respectively. It should be noted that these values are specific to the author's hardware setup and software environment, and may not work as expected on another machine -- this is why the video evidence has been provided above.
+
 ## Implementation details
 
 ### Steering angle control
@@ -58,6 +60,8 @@ Whilst an auto-tuning Twiddle algorithm was implemented for both controllers, wh
 The controller performance could be improved even further by analysing the bicycle model used by the simulator to drive the car, and developing a steering controller by means of the standard model-based design techniques of control theory. Moreover, if the bicycle model contains nonlinearities, then the controller could be designed in accordance with nonlinear and robust control techniques in order to properly address the observed performance issues.
 
 An added benefit would be that the control scheme could be made robust with respect to both external disturbances (such as the impact of buffeting wind or an uneven road surface in real world scenarios) and measurement noise in the speed and steering angle signals.
+
+Last but not least, in light of the need to develop a fully integrated control solution in the final class project, the natural next step would be to interface a computer vision algorithm with a dynamic controller and develop a system capable of driving on unfamiliar roads or paths. The approach could focus exclusively on analytical techniques based on robotics, image processing and control theory, or it could be a hybrid of traditional robotics and machine learning based approaches. Irrespective of which method is ultimately chosen, the system has to be optimised to run on an embedded platform with certain computational and resource limitations, and be able to execute predictably and reliably in real time.
 
 ## Basic build instructions
 
