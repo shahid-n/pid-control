@@ -11,7 +11,7 @@ After allowing for some transient phenomena such as overshoot and some settling 
 
 ## Control algorithm performance
 
-The performance of the implemented algorithm can be observed in the video below. It can be seen that the car successfully completes two full laps round the track. In theory, starting with the second lap, the car is expected to settle into a repeating sequence of controlled manoeuvres; consequently, lap numbers 3, 4, 5 and so forth are expected to exhibit identical performance as lap number 2, and hence, the car should be able to drive round the loop indefinitely.
+The performance of the implemented algorithm can be observed in the video below. It can be seen that the car successfully completes two full laps round the track. In theory, starting with the second lap, the car is expected to settle into a repeating sequence of controlled manoeuvres; consequently, lap numbers 3, 4, 5 and so forth are expected to exhibit performance which is identical to lap number 2, and hence, the car should be able to drive round the loop indefinitely.
 
 [![Car running laps autonomously](https://img.youtube.com/vi/73V1IrIFXyY/0.jpg)](https://www.youtube.com/watch?v=73V1IrIFXyY)
 
@@ -19,7 +19,7 @@ The performance of the implemented algorithm can be observed in the video below.
 
 ### Steering angle control
 
-The control of the car's steering angle is based on the cross track error defined as CTE = _d_<sub>ref</sub> - _d_. The steering control signal comprises three terms which are added together; namely, a term proportional to the CTE itself, a term proportional to the discrete time integral of the CTE, and finally, a term proportional to the discretised derivative of the CTE (see the [PID::UpdateError](https://github.com/shahid-n/pid-control/blob/32bc6376824c319ad88bbd9cb85abd89ba3a3a33/src/PID.cpp#L26) method).
+The control of the car's steering angle is based on the cross track error defined as CTE = _d_<sub>ref</sub> - _d_. The steering control signal comprises three terms which are added together; namely, a term proportional to the CTE itself, a term proportional to the discrete time integral of the CTE, and finally, a term proportional to the discretised derivative of the CTE (see the [PID::UpdateError](https://github.com/shahid-n/pid-control/blob/master/src/PID.cpp#L26) method).
 
 ### Speed control
 
@@ -27,21 +27,21 @@ The car's speed is modulated by first generating a speed reference signal, and t
 
 #### Speed reference generation
 
-When travelling in a straight line, the car can drive quite fast, perhaps up to 100 mph, if not more. However, when negotiating a curve, and taking into account the transient response of the steering controller which could lead to some oscillations, it would be prudent to reduce the speed for non-zero steering angles. Consequently, the speed reference signal is computed by subtracting from the `MAX_SPEED` parameter (set to 100 mph), a term which is proportional to the absolute product of steering angle and CTE -- the exact mathematical details can be found in [line 90 of main.cpp](https://github.com/shahid-n/pid-control/blob/32bc6376824c319ad88bbd9cb85abd89ba3a3a33/src/main.cpp#L90).
+When travelling in a straight line, the car can drive quite fast, perhaps up to 100 mph, if not more. However, when negotiating a curve, and taking into account the transient response of the steering controller which could lead to some oscillations, it would be prudent to reduce the speed for non-zero steering angles. Consequently, the speed reference signal is computed by subtracting from the `MAX_SPEED` parameter (set to 100 mph), a term which is proportional to the absolute product of steering angle and CTE -- the exact mathematical details can be found in [line 90 of main.cpp](https://github.com/shahid-n/pid-control/blob/master/src/main.cpp#L90).
 
 Consequently, the reference speed is reduced any time either the magnitude of steering angle or the magnitude of CTE increases.
 
-#### Throttle and braking control
+### Throttle and braking control
 
-The combined control signal which commands the car either to accelerate or apply the brake is computed in analogous fashion to the steering control, by first finding the difference between the reference speed and the car's actual speed, and feeding it into another instance of the PID controller (see [lines 91 and 92 of main.cpp](https://github.com/shahid-n/pid-control/blob/32bc6376824c319ad88bbd9cb85abd89ba3a3a33/src/main.cpp#L91)).
+The combined control signal which commands the car either to accelerate or apply the brake is computed in analogous fashion to the steering control, by first finding the difference between the reference speed and the car's actual speed, and feeding it into another instance of the PID controller (see [lines 91 and 92 of main.cpp](https://github.com/shahid-n/pid-control/blob/master/src/main.cpp#L91)).
 
 ## Concluding remarks and future work
 
 ### Effect of each PID gain parameter
 
-- _K<sub>P</sub>_: the proportional gain has a direct impact on the amount of steering applied in response to any non-zero CTE, and can thus potentially impact transient behaviours such as rise time as well as settling time, not to mention overall stability of the controller
-- _K<sub>D</sub>_: the derivative gain can help reduce settling time and can also provide damping
-- _K<sub>I</sub>_: the integral gain helps to eliminate any steady state error, but it comes at the cost of degraded transient performance, particularly in the form of increased overshoot, a phenomenon known as integrator wind-up
+- _K<sub>P</sub>_ : the proportional gain has a direct impact on the amount of steering applied in response to any non-zero CTE, and can thus potentially impact transient behaviours such as rise time as well as settling time, not to mention overall stability of the controller
+- _K<sub>D</sub>_ : the derivative gain can help reduce settling time and can also provide damping
+- _K<sub>I</sub>_ : the integral gain helps to eliminate any steady state error, but it comes at the cost of degraded transient performance, particularly in the form of increased overshoot, a phenomenon known as integrator wind-up
 
 It is worth noting that the interaction between _K<sub>I</sub>_ and _K<sub>D</sub>_ also affects the frequency of oscillations -- on the one hand, increasing _K<sub>D</sub>_ can help to mitigate any increase in overshoot caused by a larger _K<sub>I</sub>_, but it also has the side effect of increasing the frequency of oscillations, so it is prudent not to crank up this pair of parameters too high.
 
@@ -55,7 +55,7 @@ Whilst an auto-tuning Twiddle algorithm was implemented for both controllers, wh
 
 ### Additional improvements
 
-The controller performance could be improved even further by analysing the bicycle model used by the simulator to drive the car, and developing a steering controller by means of the standard model-based design techniques of control theory. Moreover, if the bicycle model contains nonlinearities, then the controller could be designed in accordance with nonlinear and robust control techniques in order to address the observed performance issues.
+The controller performance could be improved even further by analysing the bicycle model used by the simulator to drive the car, and developing a steering controller by means of the standard model-based design techniques of control theory. Moreover, if the bicycle model contains nonlinearities, then the controller could be designed in accordance with nonlinear and robust control techniques in order to properly address the observed performance issues.
 
 An added benefit would be that the control scheme could be made robust with respect to both external disturbances (such as the impact of buffeting wind or an uneven road surface in real world scenarios) and measurement noise in the speed and steering angle signals.
 
