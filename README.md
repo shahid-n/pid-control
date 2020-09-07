@@ -31,7 +31,7 @@ When travelling in a straight line, the car can drive quite fast, perhaps up to 
 
 Consequently, the reference speed is reduced any time either the magnitude of steering angle or the magnitude of CTE increases.
 
-### Throttle and braking control
+#### Throttle and braking control
 
 The combined control signal which commands the car either to accelerate or apply the brake is computed in analogous fashion to the steering control, by first finding the difference between the reference speed and the car's actual speed, and feeding it into another instance of the PID controller (see [lines 91 and 92 of main.cpp](https://github.com/shahid-n/pid-control/blob/master/src/main.cpp#L91)).
 
