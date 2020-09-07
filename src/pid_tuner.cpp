@@ -24,7 +24,7 @@ pidTuner::pidTuner(PID& pid_steering, PID& pid_throttle, double tolerance)
     twiddle_param_(0),
     error_(0),
     ignore_initial_steps(100),
-    offTrack_(false){
+    offTrack_(false) {
 }
 
 pidTuner::~pidTuner() {

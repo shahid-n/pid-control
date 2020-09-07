@@ -17,12 +17,12 @@ double rad2deg(double x) { return x * 180 / pi(); }
 
 const double MAX_SPEED = 100.0;
 const double MAX_ANGLE = 25.0;
-const double MAX_THROTTLE = 0.33;
+const double MAX_THROTTLE = 0.3;
 
+// Set the flag below to true in order to auto-tune all 6 controller hyper-parameters
 const bool twiddle = false;
 
-void reset_simulator(uWS::WebSocket<uWS::SERVER>& ws)
-{
+void reset_simulator(uWS::WebSocket<uWS::SERVER>& ws) {
   // Reset
   std::string msg("42[\"reset\", {}]");
   ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
@@ -52,17 +52,10 @@ int main() {
    * TODO: Initialize the pid variables
    */
 
-// pid_steering.Init(0.135, 0.0015, 8.516);
-// pid_throttle.Init(0.6, 0.0, 1.0);
+  pid_steering.Init(0.25, 0.005, 5.5);
+  pid_throttle.Init(0.6, 0.0, 0.1);
 
-//  Best Manual Tuning Parameters:
-//   pid_steering.Init(0.3, 0.005, 5.5);
-//   pid_throttle.Init(0.6, 0.0, 0.1);
-
-   pid_steering.Init(0.25, 0.005, 5.5);
-   pid_throttle.Init(0.6, 0.0, 0.1);
-
-   pidTuner pidtuner(pid_steering, pid_throttle, 0.1);
+  pidTuner pidtuner(pid_steering, pid_throttle, 0.1);
 
   h.onMessage([&pid_steering, &pid_throttle, &pidtuner](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                                                         uWS::OpCode opCode) {
@@ -89,6 +82,8 @@ int main() {
            *   Maybe use another PID controller to control the speed!
            */
 
+          //  The simulator computes and reports the CTE with its sign flipped, so negate it here when calling the PID
+          //  controller's UpdateError method
           pid_steering.UpdateError(-cte);
           double steer_signal = pid_steering.GetControl();
 
@@ -96,13 +91,12 @@ int main() {
           pid_throttle.UpdateError(speed_ref - speed);
           double throttle_signal = min(MAX_THROTTLE, pid_throttle.GetControl());
 
-//        DEBUG
-//        cout  << "CTE: " << cte << " Steering Value: " << steer_signal << " Throttle Value: " << throttle_signal
-//              << endl;
+          //  DEBUG
+          //  cout  << "CTE: " << cte << " Steering Value: " << steer_signal << " Throttle Value: " << throttle_signal
+          //        << endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_signal;
-//        msgJson["throttle"] = 0.3;
           msgJson["throttle"] = throttle_signal;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           cout << msg << endl;
